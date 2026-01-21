@@ -3,6 +3,7 @@ package com.url.shortener.controller;
 import com.url.shortener.dtos.LoginRequest;
 import com.url.shortener.dtos.RegisterRequest;
 import com.url.shortener.models.User;
+import com.url.shortener.security.jwt.JwtAuthenticationResponse;
 import com.url.shortener.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +25,15 @@ public class AuthController {
     }
 
     @PostMapping("/public/login")
-    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest){
-        return ResponseEntity.ok(userService.authenticateUser(loginRequest));
+    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
+
+        JwtAuthenticationResponse response =
+                userService.authenticateUser(loginRequest);
+
+        return ResponseEntity.ok(response);
     }
+
+
 
 
     @PostMapping("/public/register")

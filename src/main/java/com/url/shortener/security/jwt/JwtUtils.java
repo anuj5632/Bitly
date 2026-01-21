@@ -24,7 +24,7 @@ public class JwtUtils {
     @Value("${jwt.expiration}")
     private int jwtExpirationMs;
     public String getJwtHeader(HttpServletRequest request){
-        String bearerToken = request.getHeader("Authorisation");
+        String bearerToken = request.getHeader("Authorization");
         if(bearerToken != null && bearerToken.startsWith("Bearer ")){
             return bearerToken.substring(7);
         }
@@ -59,7 +59,7 @@ public class JwtUtils {
     public boolean validateToken(String authToken){
         try{
             Jwts.parser().verifyWith((SecretKey) key())
-                    .build().parseSignedContent(authToken);
+                    .build().parseSignedClaims(authToken);
             return true;
         } catch (JwtException e) {
             throw new RuntimeException(e);
