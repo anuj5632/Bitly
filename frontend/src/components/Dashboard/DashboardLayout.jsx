@@ -27,12 +27,12 @@ const DashboardLayout = () => {
 
   return (
     <div className="lg:px-14 sm:px-8 px-4 min-h-[calc(100vh-64px)]">
-        {loader ? ( 
+        {(loader || isLoading) ? ( 
             <Loader />
         ): ( 
         <div className="lg:w-[90%] w-full mx-auto py-16">
             <div className=" h-96 relative ">
-                {totalClicks.length === 0 && (
+                {(!totalClicks || totalClicks.length === 0) && (
                      <div className="absolute flex flex-col  justify-center sm:items-center items-end  w-full left-0 top-0 bottom-0 right-0 m-auto">
                      <h1 className=" text-slate-800 font-serif sm:text-2xl text-[18px] font-bold mb-1">
                        No Data For This Time Period
@@ -43,7 +43,7 @@ const DashboardLayout = () => {
                      </h3>
                    </div>
                 )}
-                <Graph graphData={totalClicks} />
+                <Graph graphData={totalClicks || []} />
             </div>
             <div className='py-5 sm:text-end text-center'>
                 <button
@@ -54,7 +54,7 @@ const DashboardLayout = () => {
             </div>
 
             <div>
-              {!isLoading && myShortenUrls.length === 0 ? (
+              {(!myShortenUrls || myShortenUrls.length === 0) ? (
                 <div className="flex justify-center pt-16">
                   <div className="flex gap-2 items-center justify-center  py-6 sm:px-8 px-5 rounded-md   shadow-lg  bg-gray-50">
                     <h1 className="text-slate-800 font-montserrat   sm:text-[18px] text-[14px] font-semibold mb-1 ">
