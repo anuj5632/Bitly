@@ -1,9 +1,22 @@
 import React from 'react'
+import { RotatingLines } from 'react-loader-spinner'
 
-const Loader = () => {
+function Loader() {
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-64px)]">
-      <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+    <div className="flex justify-center items-center w-full h-[450px]">
+        <div className="flex flex-col items-center gap-1">
+        <RotatingLines
+            visible={true}
+            height="65"
+            width="65"
+            color="red"
+            strokeWidth="5"
+            animationDuration="0.75"
+            ariaLabel="rotating-lines-loading"
+            wrapperStyle={{}}
+            wrapperClass=""
+            />
+        </div>
     </div>
   )
 }
