@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@Table(name = "url_mappings")
 @Data
 public class UrlMapping {
     @Id
@@ -78,6 +79,6 @@ public class UrlMapping {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "urlMapping")
+    @OneToMany(mappedBy = "urlMapping", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ClickEvent> clickEvents;
 }
