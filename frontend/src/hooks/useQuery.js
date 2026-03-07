@@ -32,8 +32,18 @@ export const useFetchTotalClicks = (token, onError) => {
     return useQuery({
         queryKey: ["url-totalclick", token],
         queryFn: async () => {
+            // Dynamic date range: last 30 days to today
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(startDate.getDate() - 30);
+            
+            const pad = (n) => n.toString().padStart(2, '0');
+            // Format as ISO_LOCAL_DATE (yyyy-MM-dd) for /totalClicks endpoint
+            const formatDate = (date) => 
+                `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+            
             return await api.get(
-                "/api/url/analytics/abc123?startDate=2024-12-01T00:00:00&endDate=2024-12-07T23:59:59",
+                `/api/url/totalClicks?startDate=${formatDate(startDate)}&endDate=${formatDate(endDate)}`,
                 {
                     headers: {
                         "Content-Type": "application/json",

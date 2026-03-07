@@ -1,14 +1,22 @@
-import React from 'react'
-import ShortenItem from './ShortenItem'
+import React from 'react';
+import { motion } from 'framer-motion';
+import ShortenItem from './ShortenItem';
 
 const ShortenUrlList = ({ data }) => {
   return (
-    <div className='my-6 space-y-4'>
-        {data.map((item) => (
-            <ShortenItem key={item.id} {...item} />
-        ))}
+    <div className="space-y-4">
+      {data.map((item, index) => (
+        <motion.div
+          key={item.id}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: index * 0.05 }}
+        >
+          <ShortenItem {...item} />
+        </motion.div>
+      ))}
     </div>
-  )
-}
+  );
+};
 
-export default ShortenUrlList
+export default ShortenUrlList;

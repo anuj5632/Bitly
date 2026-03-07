@@ -1,13 +1,15 @@
-import { BrowserRouter, Route, Router, Routes } from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom'
 import './App.css'
+import { getApps } from './utils/helper';
+
 function App() {
 
   const CurrentApp = getApps();
 
   return (
-    <Router>
+    <BrowserRouter>
       <CurrentApp />
-    </Router>
+    </BrowserRouter>
   )
 }
 

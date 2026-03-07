@@ -1,176 +1,246 @@
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import dayjs from 'dayjs';
-import React, { useEffect, useState } from 'react'
-import CopyToClipboard from 'react-copy-to-clipboard';
-import { FaExternalLinkAlt, FaRegCalendarAlt } from 'react-icons/fa';
-import { IoCopy } from 'react-icons/io5';
-import { LiaCheckSolid } from 'react-icons/lia';
-import { MdAnalytics, MdOutlineAdsClick } from 'react-icons/md';
-import api from '../../api/api';
+import { 
+  ExternalLink, 
+  Copy, 
+  Check, 
+  Calendar, 
+  MousePointerClick,
+  ChevronDown,
+  BarChart3,
+  QrCode,
+  Trash2
+} from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+
+import api from '../../api/api';
 import { useStoreContext } from '../../contextApi/ContextApi';
-import { Hourglass } from 'react-loader-spinner';
+import { Button } from '../ui';
 import Graph from './Graph';
 
 const ShortenItem = ({ originalUrl, shortUrl, clickCount, createdDate }) => {
-    const { token } = useStoreContext();
-    const navigate = useNavigate();
-    const [isCopied, setIsCopied] = useState(false);
-    const [analyticToggle, setAnalyticToggle] = useState(false);
-    const [loader, setLoader] = useState(false);
-    const [selectedUrl, setSelectedUrl] = useState("");
-    const [analyticsData, setAnalyticsData] = useState([]);
+  const { token } = useStoreContext();
+  const navigate = useNavigate();
+  const [isCopied, setIsCopied] = useState(false);
+  const [showAnalytics, setShowAnalytics] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [analyticsData, setAnalyticsData] = useState([]);
 
-    const subDomain = import.meta.env.VITE_REACT_FRONT_END_URL.replace(
-        /^https?:\/\//,
-        ""
+  const subDomain = import.meta.env.VITE_REACT_FRONT_END_URL?.replace(/^https?:\/\//, "") || "localhost";
+  const fullShortUrl = `${import.meta.env.VITE_REACT_FRONT_END_URL}/s/${shortUrl}`;
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(fullShortUrl);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
+  const fetchAnalytics = async () => {
+    if (analyticsData.length > 0) return; // Already fetched
+    
+    setLoading(true);
+    try {
+      // Use dynamic date range: last 30 days to today
+      const endDate = new Date();
+      endDate.setHours(23, 59, 59, 0); // End of today
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - 30);
+      startDate.setHours(0, 0, 0, 0); // Start of day 30 days ago
+      
+      const formatDate = (date) => {
+        const pad = (n) => n.toString().padStart(2, '0');
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+      };
+      
+      const { data } = await api.get(
+        `/api/url/analytics/${shortUrl}?startDate=${formatDate(startDate)}&endDate=${formatDate(endDate)}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: "Bearer " + token,
+          },
+        }
       );
-
-    const analyticsHandler = (shortUrl) => {
-        if (!analyticToggle) {
-            setSelectedUrl(shortUrl);
-        }
-        setAnalyticToggle(!analyticToggle);
+      console.log("Analytics response:", data);
+      // Transform object to array format for Graph component
+      let transformedData = [];
+      if (data && typeof data === 'object' && !Array.isArray(data)) {
+        transformedData = Object.keys(data).map((key) => ({
+          clickDate: key,
+          count: data[key],
+        }));
+      } else if (Array.isArray(data)) {
+        transformedData = data;
+      }
+      console.log("Transformed data:", transformedData);
+      setAnalyticsData(transformedData);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    const fetchMyShortUrl = async () => {
-        setLoader(true);
-        try {
-             const { data } = await api.get(`/api/urls/analytics/${selectedUrl}?startDate=2024-12-01T00:00:00&endDate=2025-12-31T23:59:59`, {
-                        headers: {
-                          "Content-Type": "application/json",
-                          Accept: "application/json",
-                          Authorization: "Bearer " + token,
-                        },
-                      });
-            setAnalyticsData(data);
-            setSelectedUrl("");
-            console.log(data);
-            
-        } catch (error) {
-            navigate("/error");
-            console.log(error);
-        } finally {
-            setLoader(false);
-        }
+  const handleToggleAnalytics = () => {
+    if (!showAnalytics) {
+      fetchAnalytics();
     }
-
-
-    useEffect(() => {
-        if (selectedUrl) {
-            fetchMyShortUrl();
-        }
-    }, [selectedUrl]);
+    setShowAnalytics(!showAnalytics);
+  };
 
   return (
-    <div className={`bg-slate-100 shadow-lg border border-dotted  border-slate-500 px-6 sm:py-1 py-3 rounded-md  transition-all duration-100 `}>
-    <div className={`flex sm:flex-row flex-col  sm:justify-between w-full sm:gap-0 gap-5 py-5 `}>
-      <div className="flex-1 sm:space-y-1 max-w-full overflow-x-auto overflow-y-hidden ">
-        <div className="text-slate-900 pb-1 sm:pb-0   flex items-center gap-2 ">
-            {/* <a href={`${import.meta.env.VITE_REACT_SUBDOMAIN}/${shortUrl}`}
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-dark-800/30 backdrop-blur-sm border border-dark-700/50 rounded-2xl overflow-hidden hover:border-dark-600/50 transition-all duration-300"
+    >
+      {/* Main Content */}
+      <div className="p-5">
+        <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+          {/* URL Info */}
+          <div className="flex-1 min-w-0">
+            {/* Short URL */}
+            <div className="flex items-center gap-2 mb-2">
+              <Link
+                to={`/s/${shortUrl}`}
                 target="_blank"
-                className=" text-[17px]  font-montserrat font-[600] text-linkColor ">
-                {subDomain + "/" + `${shortUrl}`}
-            </a> */}
-
-            <Link
-              target='_'
-              className='text-[17px]  font-montserrat font-[600] text-linkColor'
-              to={import.meta.env.VITE_REACT_FRONT_END_URL + "/s/" + `${shortUrl}`}>
-                  {subDomain + "/s/" + `${shortUrl}`}
-            </Link>
-            <FaExternalLinkAlt className="text-linkColor" />
+                className="text-primary-400 hover:text-primary-300 font-medium flex items-center gap-2 transition-colors"
+              >
+                <span className="truncate">{subDomain}/s/{shortUrl}</span>
+                <ExternalLink className="w-4 h-4 shrink-0" />
+              </Link>
             </div>
-
-        <div className="flex items-center gap-1 ">
-            <h3 className=" text-slate-700 font-[400] text-[17px] ">
+            
+            {/* Original URL */}
+            <p className="text-dark-400 text-sm truncate mb-3">
               {originalUrl}
-            </h3>
+            </p>
+            
+            {/* Meta Info */}
+            <div className="flex flex-wrap items-center gap-4 text-sm">
+              <div className="flex items-center gap-1.5 text-emerald-400">
+                <MousePointerClick className="w-4 h-4" />
+                <span className="font-medium">{clickCount}</span>
+                <span className="text-dark-400">
+                  {clickCount === 1 ? 'click' : 'clicks'}
+                </span>
+              </div>
+              
+              <div className="flex items-center gap-1.5 text-dark-400">
+                <Calendar className="w-4 h-4" />
+                <span>{dayjs(createdDate).format("MMM DD, YYYY")}</span>
+              </div>
+            </div>
           </div>
-
-          <div className="flex   items-center gap-8 pt-6 ">
-            <div className="flex gap-1  items-center font-semibold  text-green-800">
-              <span>
-                <MdOutlineAdsClick className="text-[22px] me-1" />
-              </span>
-              <span className="text-[16px]">{clickCount}</span>
-              <span className="text-[15px] ">
-                {clickCount === 0 || clickCount === 1 ? "Click" : "Clicks"}
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2 font-semibold text-lg text-slate-800">
-              <span>
-                <FaRegCalendarAlt />
-              </span>
-              <span className="text-[17px]">
-                {dayjs(createdDate).format("MMM DD, YYYY")}
-              </span>
-            </div>
-            </div>
-        </div>
-
-        <div className="flex  flex-1  sm:justify-end items-center gap-4">
-            <CopyToClipboard
-                onCopy={() => setIsCopied(true)}
-                text={`${import.meta.env.VITE_REACT_FRONT_END_URL + "/s/" + `${shortUrl}`}`}
+          
+          {/* Actions */}
+          <div className="flex items-center gap-2 shrink-0">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleCopy}
+              className={`
+                flex items-center gap-2 px-4 py-2 rounded-xl
+                transition-all duration-300
+                ${isCopied 
+                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' 
+                  : 'bg-dark-700/50 text-dark-200 hover:text-white border border-dark-600 hover:border-primary-500/50'
+                }
+              `}
             >
-                <div className="flex cursor-pointer gap-1 items-center bg-btnColor py-2  font-semibold shadow-md shadow-slate-500 px-6 rounded-md text-white ">
-                <button className="">{isCopied ? "Copied" : "Copy"}</button>
+              <AnimatePresence mode="wait">
                 {isCopied ? (
-                    <LiaCheckSolid className="text-md" />
+                  <motion.div
+                    key="check"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    className="flex items-center gap-2"
+                  >
+                    <Check className="w-4 h-4" />
+                    <span>Copied!</span>
+                  </motion.div>
                 ) : (
-                    <IoCopy className="text-md" />
+                  <motion.div
+                    key="copy"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    className="flex items-center gap-2"
+                  >
+                    <Copy className="w-4 h-4" />
+                    <span>Copy</span>
+                  </motion.div>
                 )}
-                </div>
-            </CopyToClipboard>
-
-            <div
-                onClick={() => analyticsHandler(shortUrl)}
-                className="flex cursor-pointer gap-1 items-center bg-rose-700 py-2 font-semibold shadow-md shadow-slate-500 px-6 rounded-md text-white "
+              </AnimatePresence>
+            </motion.button>
+            
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleToggleAnalytics}
+              className={`
+                flex items-center gap-2 px-4 py-2 rounded-xl
+                transition-all duration-300
+                ${showAnalytics 
+                  ? 'bg-primary-500/10 text-primary-400 border border-primary-500/30' 
+                  : 'bg-dark-700/50 text-dark-200 hover:text-white border border-dark-600 hover:border-primary-500/50'
+                }
+              `}
             >
-                <button>Analytics</button>
-                <MdAnalytics className="text-md" />
-          </div>
+              <BarChart3 className="w-4 h-4" />
+              <span>Analytics</span>
+              <ChevronDown className={`w-4 h-4 transition-transform ${showAnalytics ? 'rotate-180' : ''}`} />
+            </motion.button>
           </div>
         </div>
-    <React.Fragment>
-        <div className={`${
-            analyticToggle ? "flex" : "hidden"
-          }  max-h-96 sm:mt-0 mt-5 min-h-96 relative  border-t-2 w-[100%] overflow-hidden `}>
-            {loader ? (
-                <div className="min-h-[calc(450px-140px)] flex justify-center items-center w-full">
-                    <div className="flex flex-col items-center gap-1">
-                    <Hourglass
-                        visible={true}
-                        height="50"
-                        width="50"
-                        ariaLabel="hourglass-loading"
-                        wrapperStyle={{}}
-                        wrapperClass=""
-                        colors={['#306cce', '#72a1ed']}
-                        />
-                        <p className='text-slate-700'>Please Wait...</p>
-                    </div>
-                </div>
-                ) : ( 
-                    <>{analyticsData.length === 0 && (
-                        <div className="absolute flex flex-col  justify-center sm:items-center items-end  w-full left-0 top-0 bottom-0 right-0 m-auto">
-                            <h1 className=" text-slate-800 font-serif sm:text-2xl text-[15px] font-bold mb-1">
-                                No Data For This Time Period
-                            </h1>
-                            <h3 className="sm:w-96 w-[90%] sm:ml-0 pl-6 text-center sm:text-lg text-[12px] text-slate-600 ">
-                                Share your short link to view where your engagements are
-                                coming from
-                            </h3>
-                        </div>
-                    )}
-                        <Graph graphData={analyticsData} />
-                    </>
-                    )}
-        </div>
-    </React.Fragment>
-    </div>
-  )
-}
+      </div>
 
-export default ShortenItem
+      {/* Analytics Panel */}
+      <AnimatePresence>
+        {showAnalytics && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="border-t border-dark-700/50 p-5 bg-dark-900/30">
+              <div className="h-64 relative">
+                {loading ? (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
+                      <p className="text-dark-400 text-sm">Loading analytics...</p>
+                    </div>
+                  </div>
+                ) : analyticsData.length === 0 ? (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <div className="p-3 bg-dark-800/50 rounded-xl mb-3">
+                      <BarChart3 className="w-8 h-8 text-dark-500" />
+                    </div>
+                    <h4 className="text-white font-medium mb-1">No analytics yet</h4>
+                    <p className="text-dark-400 text-sm text-center max-w-xs">
+                      Share this link to start seeing engagement data
+                    </p>
+                  </div>
+                ) : (
+                  <Graph graphData={analyticsData} type="bar" />
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+};
+
+export default ShortenItem;

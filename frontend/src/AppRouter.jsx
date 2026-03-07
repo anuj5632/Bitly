@@ -1,4 +1,5 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 import Navbar from "./components/NavBar";
 import ShortenUrlPage from "./components/ShortenUrlPage";
 import { Toaster } from "react-hot-toast";
@@ -11,17 +12,39 @@ import DashboardLayout from "./components/Dashboard/DashboardLayout";
 import PrivateRoute from "./PrivateRoute";
 import ErrorPage from "./components/ErrorPage";
 
-// <PrivateRoute publicPage={true}>
-//      <RegisterPage />
-// </PrivateRoute>
-
 const AppRouter = () => {
+  const location = useLocation();
   const hideHeaderFooter = location.pathname.startsWith("/s");
 
     return (
         <>
         {!hideHeaderFooter && <Navbar /> }
-        <Toaster position='bottom-center'/>
+        <Toaster 
+          position='bottom-center'
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: 'rgba(30, 41, 59, 0.95)',
+              color: '#f8fafc',
+              border: '1px solid rgba(139, 92, 246, 0.3)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '12px',
+              padding: '12px 16px',
+            },
+            success: {
+              iconTheme: {
+                primary: '#22c55e',
+                secondary: '#f8fafc',
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: '#ef4444',
+                secondary: '#f8fafc',
+              },
+            },
+          }}
+        />
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/about" element={<AboutPage />} />

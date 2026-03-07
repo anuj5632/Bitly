@@ -1,16 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, Mail, Lock, ArrowRight, UserPlus } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 import api from '../api/api';
+import { useStoreContext } from '../contextApi/ContextApi';
 import { Button, GlassCard, GradientBlob, PageTransition } from './ui';
 
-const RegisterPage = () => {
+const LoginPage = () => {
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
+  const { token, setToken } = useStoreContext();
+
+  useEffect(() => {
+    console.log("Token changed:", token);
+    if (token) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [token, navigate]);
 
   const {
     register,
@@ -20,28 +29,30 @@ const RegisterPage = () => {
   } = useForm({
     defaultValues: {
       username: "",
-      email: "",
       password: "",
     },
     mode: "onTouched",
   });
 
-  const registerHandler = async (data) => {
+  const loginHandler = async (data) => {
     setLoader(true);
     try {
-      await api.post("/api/auth/public/register", data);
-      reset();
-      toast.success("Account created successfully!", {
+      const { data: response } = await api.post("/api/auth/public/login", data);
+      console.log("API Response:", response);
+      console.log("Token from response:", response.Token);
+      setToken(response.Token);
+      localStorage.setItem("JWT_TOKEN", JSON.stringify(response.Token));
+      toast.success("Welcome back!", {
         style: {
           background: '#0f172a',
           color: '#e2e8f0',
           border: '1px solid rgba(124, 58, 237, 0.3)',
         },
       });
-      navigate("/login");
+      reset();
     } catch (error) {
       console.log(error);
-      toast.error("Registration failed. Please try again.", {
+      toast.error("Invalid credentials", {
         style: {
           background: '#0f172a',
           color: '#e2e8f0',
@@ -57,14 +68,14 @@ const RegisterPage = () => {
     <PageTransition className="min-h-screen flex items-center justify-center px-4 py-20">
       {/* Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <GradientBlob className="w-96 h-96 -top-48 right-0 opacity-30" color="purple" />
-        <GradientBlob className="w-96 h-96 bottom-0 -left-48 opacity-20 animation-delay-2000" color="primary" />
+        <GradientBlob className="w-96 h-96 -top-48 -left-48 opacity-30" color="primary" />
+        <GradientBlob className="w-96 h-96 bottom-0 right-0 opacity-20 animation-delay-2000" color="purple" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(124,58,237,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(124,58,237,0.03)_1px,transparent_1px)] bg-size-[64px_64px]" />
       </div>
 
       <div className="relative w-full max-w-md">
         {/* Glow effect behind card */}
-        <div className="absolute inset-0 bg-linear-to-r from-indigo-600/20 to-primary-600/20 rounded-3xl blur-3xl" />
+        <div className="absolute inset-0 bg-linear-to-r from-primary-600/20 to-indigo-600/20 rounded-3xl blur-3xl" />
         
         <GlassCard className="relative" padding="p-8" hover={false}>
           {/* Header */}
@@ -73,15 +84,15 @@ const RegisterPage = () => {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", duration: 0.5 }}
-              className="inline-flex items-center justify-center p-3 bg-linear-to-br from-indigo-600 to-primary-600 rounded-2xl mb-4"
+              className="inline-flex items-center justify-center p-3 bg-linear-to-br from-primary-600 to-indigo-600 rounded-2xl mb-4"
             >
-              <UserPlus className="w-8 h-8 text-white" />
+              <Sparkles className="w-8 h-8 text-white" />
             </motion.div>
-            <h1 className="text-2xl font-bold text-white mb-2">Create an account</h1>
-            <p className="text-dark-400">Get started with Linklytics today</p>
+            <h1 className="text-2xl font-bold text-white mb-2">Welcome back</h1>
+            <p className="text-dark-400">Sign in to your account to continue</p>
           </div>
 
-          <form onSubmit={handleSubmit(registerHandler)} className="space-y-5">
+          <form onSubmit={handleSubmit(loginHandler)} className="space-y-5">
             {/* Username Field */}
             <div className="space-y-2">
               <label htmlFor="username" className="block text-sm font-medium text-dark-300">
@@ -89,12 +100,12 @@ const RegisterPage = () => {
               </label>
               <div className="relative">
                 <div className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-400">
-                  <User className="w-5 h-5" />
+                  <Mail className="w-5 h-5" />
                 </div>
                 <input
                   type="text"
                   id="username"
-                  placeholder="Choose a username"
+                  placeholder="Enter your username"
                   className={`
                     w-full pl-11 pr-4 py-3
                     bg-dark-800/50 backdrop-blur-sm
@@ -118,48 +129,6 @@ const RegisterPage = () => {
               )}
             </div>
 
-            {/* Email Field */}
-            <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-medium text-dark-300">
-                Email
-              </label>
-              <div className="relative">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-400">
-                  <Mail className="w-5 h-5" />
-                </div>
-                <input
-                  type="email"
-                  id="email"
-                  placeholder="Enter your email"
-                  className={`
-                    w-full pl-11 pr-4 py-3
-                    bg-dark-800/50 backdrop-blur-sm
-                    border rounded-xl
-                    text-white placeholder-dark-400
-                    transition-all duration-300
-                    input-glow
-                    ${errors.email ? 'border-red-500' : 'border-dark-600 focus:border-primary-500 hover:border-dark-500'}
-                  `}
-                  {...register("email", { 
-                    required: "Email is required",
-                    pattern: {
-                      value: /^[a-zA-Z0-9]+@(?:[a-zA-Z0-9]+\.)+com+$/,
-                      message: "Invalid email address"
-                    }
-                  })}
-                />
-              </div>
-              {errors.email && (
-                <motion.p
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-sm text-red-400"
-                >
-                  {errors.email.message}
-                </motion.p>
-              )}
-            </div>
-
             {/* Password Field */}
             <div className="space-y-2">
               <label htmlFor="password" className="block text-sm font-medium text-dark-300">
@@ -172,7 +141,7 @@ const RegisterPage = () => {
                 <input
                   type="password"
                   id="password"
-                  placeholder="Create a password"
+                  placeholder="Enter your password"
                   className={`
                     w-full pl-11 pr-4 py-3
                     bg-dark-800/50 backdrop-blur-sm
@@ -208,19 +177,19 @@ const RegisterPage = () => {
               icon={ArrowRight}
               iconPosition="right"
             >
-              Create Account
+              Sign In
             </Button>
           </form>
 
           {/* Footer */}
           <div className="mt-6 text-center">
             <p className="text-dark-400 text-sm">
-              Already have an account?{' '}
+              Don't have an account?{' '}
               <Link
-                to="/login"
+                to="/register"
                 className="text-primary-400 hover:text-primary-300 font-medium transition-colors"
               >
-                Sign in
+                Sign up
               </Link>
             </p>
           </div>
@@ -230,4 +199,4 @@ const RegisterPage = () => {
   );
 };
 
-export default RegisterPage;
+export default LoginPage;
