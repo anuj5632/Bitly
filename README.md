@@ -29,7 +29,7 @@ This project demonstrates real-world system design with a modern frontend, scala
 
 * Vite
 * HTML, Tailwind CSS
-* Javascript
+* JavaScript
 * React
 
 ### Backend
