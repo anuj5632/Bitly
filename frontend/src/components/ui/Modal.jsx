@@ -20,11 +20,11 @@ const Modal = ({ isOpen, onClose, children, title, size = 'md' }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm"
           />
           
           {/* Modal */}
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -32,19 +32,18 @@ const Modal = ({ isOpen, onClose, children, title, size = 'md' }) => {
               transition={{ duration: 0.2 }}
               className={`
                 relative w-full ${sizes[size]}
-                bg-dark-900/95 backdrop-blur-xl
-                border border-dark-700/50
-                rounded-2xl shadow-glass-lg
+                bg-surface border-2 border-border-base
+                rounded-md shadow-lg
                 overflow-hidden
               `}
             >
               {/* Header */}
               {title && (
-                <div className="flex items-center justify-between px-6 py-4 border-b border-dark-700/50">
-                  <h2 className="text-xl font-semibold text-white">{title}</h2>
+                <div className="flex items-center justify-between px-6 py-5 border-b border-border-base bg-surface-secondary">
+                  <h2 className="font-heading text-xl font-bold text-white uppercase tracking-widest">{title}</h2>
                   <button
                     onClick={onClose}
-                    className="p-2 text-dark-400 hover:text-white transition-colors rounded-lg hover:bg-dark-800"
+                    className="p-2 text-on-surface-muted hover:text-white transition-colors rounded-md hover:bg-surface-card"
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -52,7 +51,7 @@ const Modal = ({ isOpen, onClose, children, title, size = 'md' }) => {
               )}
               
               {/* Content */}
-              <div className="p-6">
+              <div className="p-8">
                 {children}
               </div>
               
@@ -60,7 +59,7 @@ const Modal = ({ isOpen, onClose, children, title, size = 'md' }) => {
               {!title && (
                 <button
                   onClick={onClose}
-                  className="absolute top-4 right-4 p-2 text-dark-400 hover:text-white transition-colors rounded-lg hover:bg-dark-800"
+                  className="absolute top-4 right-4 p-2 text-on-surface-muted hover:text-white transition-colors rounded-md hover:bg-surface-card"
                 >
                   <X className="w-5 h-5" />
                 </button>

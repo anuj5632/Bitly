@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useStoreContext } from '../../contextApi/ContextApi';
 import { useFetchMyShortUrls, useFetchTotalClicks } from '../../hooks/useQuery';
-import { Button, GlassCard, GradientBlob, PageTransition, StatsCard, TableSkeleton } from '../ui';
+import { Button, GlassCard as Card, PageTransition, StatsCard } from '../ui';
 import Graph from './Graph';
 import ShortenPopUp from './ShortenPopUp';
 import ShortenUrlList from './ShortenUrlList';
@@ -23,7 +23,6 @@ const DashboardLayout = () => {
     navigate("/error");
   }
 
-  // Calculate stats
   const totalLinks = myShortenUrls?.length || 0;
   const totalClicksCount = totalClicks?.reduce((sum, item) => sum + item.count, 0) || 0;
   const avgClicksPerLink = totalLinks > 0 ? Math.round(totalClicksCount / totalLinks) : 0;
@@ -33,133 +32,128 @@ const DashboardLayout = () => {
   }
 
   return (
-    <PageTransition className="min-h-screen pt-20 pb-12">
-      {/* Background Elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <GradientBlob className="w-96 h-96 -top-48 -right-48 opacity-20" color="primary" />
-        <GradientBlob className="w-96 h-96 bottom-0 -left-48 opacity-15 animation-delay-2000" color="purple" />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(124,58,237,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(124,58,237,0.02)_1px,transparent_1px)] bg-size-[64px_64px]" />
-      </div>
+    <PageTransition className="min-h-screen relative overflow-hidden bg-surface pt-24 pb-32">
+      <div className="fixed inset-0 bg-crosshatch opacity-10 pointer-events-none" />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-12 border-b border-border-base pb-8">
           <div>
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-3xl font-bold text-white"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="font-heading text-4xl font-bold text-white lime-glow"
             >
               Dashboard
             </motion.h1>
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-dark-400 mt-1"
+              className="font-body text-on-surface-secondary mt-2 uppercase tracking-widest text-xs font-bold"
             >
-              Manage and track your shortened URLs
+              The Nocturnal Registry
             </motion.p>
           </div>
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
           >
             <Button
               onClick={() => setShortenPopUp(true)}
-              icon={Plus}
+              variant="primary"
               size="lg"
+              className="shadow-md"
             >
-              Create New Link
+              Create New Sketch
             </Button>
           </motion.div>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-12">
           <StatsCard
-            title="Total Links"
+            title="Total Registry"
             value={totalLinks}
             icon={Link2}
+            className="tilted-card"
+            style={{ '--tilt': '0.5deg' }}
           />
           <StatsCard
-            title="Total Clicks"
+            title="Total Impressions"
             value={totalClicksCount}
             icon={MousePointerClick}
+            className="tilted-card"
+            style={{ '--tilt': '-0.5deg' }}
           />
           <StatsCard
-            title="Avg. Clicks per Link"
+            title="Efficiency"
             value={avgClicksPerLink}
             icon={TrendingUp}
+            className="tilted-card"
+            style={{ '--tilt': '0.8deg' }}
           />
         </div>
 
-        {/* Analytics Chart */}
-        <GlassCard className="mb-8" hover={false}>
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary-600/10 rounded-lg">
-                <BarChart3 className="w-5 h-5 text-primary-400" />
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold text-white">Click Analytics</h2>
-                <p className="text-sm text-dark-400">Overview of your link performance</p>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Analytics Chart */}
+          <Card className="lg:col-span-2 !bg-surface-card border border-border-base" hover={false} tilt="0deg">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-surface-secondary border border-border-base rounded-md text-primary">
+                  <BarChart3 className="w-6 h-6" />
+                </div>
+                <div>
+                  <h2 className="font-heading text-xl font-bold text-white">Engagement Graph</h2>
+                  <p className="font-body text-xs text-on-surface-muted uppercase tracking-widest font-bold">Temporal Analysis</p>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="h-80 relative">
-            {(!totalClicks || totalClicks.length === 0) ? (
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <div className="p-4 bg-dark-800/50 rounded-2xl mb-4">
-                  <BarChart3 className="w-12 h-12 text-dark-500" />
+            <div className="h-80 relative">
+              {(!totalClicks || totalClicks.length === 0) ? (
+                <div className="absolute inset-0 flex flex-col items-center justify-center opacity-50">
+                  <BarChart3 className="w-16 h-16 text-on-surface-muted mb-4" />
+                  <h3 className="font-heading text-lg font-bold text-white mb-2">Null Data</h3>
+                  <p className="font-body text-on-surface-secondary text-sm">Registry is currently silent.</p>
                 </div>
-                <h3 className="text-lg font-medium text-white mb-1">No data yet</h3>
-                <p className="text-dark-400 text-center max-w-xs">
-                  Share your short links to see engagement analytics here
-                </p>
-              </div>
-            ) : (
-              <Graph graphData={totalClicks} />
-            )}
-          </div>
-        </GlassCard>
+              ) : (
+                <Graph graphData={totalClicks} />
+              )}
+            </div>
+          </Card>
 
-        {/* URL List */}
-        <GlassCard hover={false} padding="p-0">
-          <div className="p-6 border-b border-dark-700/50">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary-600/10 rounded-lg">
-                <Link2 className="w-5 h-5 text-primary-400" />
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold text-white">Your Links</h2>
-                <p className="text-sm text-dark-400">{totalLinks} total links created</p>
+          {/* URL List */}
+          <Card className="lg:col-span-1 !bg-surface-card border border-border-base" hover={false} padding="p-0" tilt="0deg">
+            <div className="p-6 border-b border-border-base bg-surface-secondary/50">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-surface rounded-md text-primary">
+                  <Link2 className="w-6 h-6" />
+                </div>
+                <div>
+                  <h2 className="font-heading text-lg font-bold text-white">The Registry</h2>
+                  <p className="font-body text-[10px] text-on-surface-muted uppercase tracking-widest font-bold">{totalLinks} SKETCHES RECORDED</p>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="p-6">
-            {(!myShortenUrls || myShortenUrls.length === 0) ? (
-              <div className="text-center py-12">
-                <div className="p-4 bg-dark-800/50 rounded-2xl inline-block mb-4">
-                  <Link2 className="w-12 h-12 text-dark-500" />
+            <div className="p-6 max-h-[600px] overflow-y-auto custom-scrollbar">
+              {(!myShortenUrls || myShortenUrls.length === 0) ? (
+                <div className="text-center py-12">
+                  <Link2 className="w-12 h-12 text-on-surface-muted mx-auto mb-4 opacity-30" />
+                  <h3 className="font-heading text-lg font-bold text-white mb-4">Empty Canvas</h3>
+                  <Button onClick={() => setShortenPopUp(true)} size="sm">
+                    Inscribe First Link
+                  </Button>
                 </div>
-                <h3 className="text-lg font-medium text-white mb-1">No links yet</h3>
-                <p className="text-dark-400 mb-6">Create your first shortened URL to get started</p>
-                <Button onClick={() => setShortenPopUp(true)} icon={Plus}>
-                  Create Your First Link
-                </Button>
-              </div>
-            ) : (
-              <ShortenUrlList data={myShortenUrls} />
-            )}
-          </div>
-        </GlassCard>
+              ) : (
+                <ShortenUrlList data={myShortenUrls} />
+              )}
+            </div>
+          </Card>
+        </div>
       </div>
 
-      {/* Create URL Modal */}
       <ShortenPopUp
         refetch={refetch}
         open={shortenPopUp}

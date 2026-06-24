@@ -1,0 +1,75 @@
+{
+  "guides": [
+    {
+      "name": "lime-charcoal-inspiration",
+      "tokens": {
+        "colors": {
+          "primary": "#DFFF00",
+          "primary-hover": "#EFFF33",
+          "on-primary": "#000000",
+          "accent": "#DFFF00",
+          "surface": "#2C2C2C",
+          "surface-card": "#383838",
+          "surface-card-hover": "#444444",
+          "surface-secondary": "#1A1A1A",
+          "on-surface": "#E0E0E0",
+          "on-surface-secondary": "#A0A0A0",
+          "on-surface-muted": "#666666",
+          "border": "#444444",
+          "border-hover": "#555555",
+          "success": "#4ADE80",
+          "warning": "#FACC15",
+          "error": "#F87171"
+        },
+        "typography": {
+          "heading": {
+            "family": "\"Bitter\", serif",
+            "size": "72px",
+            "url": ""
+          },
+          "heading-section": {
+            "family": "\"Bitter\", serif",
+            "size": "48px",
+            "url": ""
+          },
+          "body": {
+            "family": "\"Cabin\", sans-serif",
+            "size": "16px",
+            "url": ""
+          },
+          "body-lg": {
+            "family": "\"Cabin\", sans-serif",
+            "size": "20px",
+            "url": ""
+          },
+          "label": {
+            "family": "\"Cabin\", sans-serif",
+            "size": "12px",
+            "url": ""
+          }
+        },
+        "spacing": {
+          "xs": "4px",
+          "sm": "8px",
+          "md": "16px",
+          "lg": "24px",
+          "xl": "28px",
+          "xxl": "32px",
+          "xxxl": "48px"
+        },
+        "radius": {
+          "sm": "2px",
+          "md": "4px",
+          "lg": "8px",
+          "xl": "12px",
+          "full": "9999px",
+          "wabi": "40px 10px 45px 12px / 15px 40px 10px 45px"
+        }
+      },
+      "designInstructions": "## Token Instructions\n\n- `primary` (#DFFF00) -> the single lime voltage for CTAs, highlights, and glow (hover `primary-hover`); keep it scarce against the grey\n- `on-primary` (#000000) -> black text on lime fills\n- `surface`/`surface-card`/`surface-secondary` -> the layered charcoal ladder (page #2C2C2C -> cards #383838 -> sidebar/footer #1A1A1A)\n- `on-surface` (#E0E0E0) -> soft off-white ink, never pure white\n- `border` (#444444) -> hairlines (hover `#555`)\n- `success`/`warning`/`error` -> status only\n- `heading` (Bitter slab-serif, with lime glow) -> headlines; `body`/`label` (Cabin) -> prose and uppercase tags\n- `radius` small (2/4/8/12px), `radius.full` for pills/avatars/dock, and `wabi` for organic testimonial bubbles\n- shadows are chunky soft-black offsets (sm 2px, md 6px, lg 12px) on cards\n\n# Lime Charcoal — \"WanderSketch Charcoal\"\n\n> Design spec — version alpha. Source: static HTML (`lime-charcoal.html`); tokens read from the `--k-*` CSS variables and component CSS. Fictional nocturnal sketching app; described factually.\n\n## Overview\n\nA **moody, nocturnal charcoal sketchbook**. The canvas is a layered dark grey — `{colors.surface}` `#2C2C2C` page, `{colors.surface-card}` `#383838` cards, `{colors.surface-secondary}` `#1A1A1A` sidebar/footer — inked in soft off-white `{colors.on-surface}` `#E0E0E0`. The single brand voltage is an **electric lime-chartreuse** `{colors.primary}` `#DFFF00` that literally glows (text-shadow, drop-shadow) and is reserved for CTAs, highlights and active states. The design is **token-driven** via `--k-*` variables and leans into **wabi-sabi imperfection**: cards sit at slight rotations and straighten on hover, headings carry hand-drawn underline scribbles, and surfaces wear crosshatch, carbon-fibre, torn-paper and marching-ant textures. Type pairs a **Bitter** slab-serif (headings) with **Cabin** (body). Radii are small (2/4/8/12px) and shadows are chunky soft-black offsets (up to `12px 12px 0`).\n\n## Colors\n\n**Brand.** Lime `{colors.primary}` `#DFFF00` (hover `#EFFF33`) is the only saturated color — it glows on headings, fills the morph-blob nav indicator, sweeps up inside the marching-ant button, and highlights key words on black text (`{colors.on-primary}`). Discipline: lime is scarce against the grey, always signalling \"active/brand.\"\n\n**Surfaces.** Three greys ladder from page → card → secondary, with `{colors.surface-card-hover}` `#444444` on hover; `{colors.border}` `#444` hairlines (hover `#555`).\n\n**Text.** `{colors.on-surface}` `#E0E0E0` primary, `{colors.on-surface-secondary}` `#A0A0A0`, `{colors.on-surface-muted}` `#666`. Semantic success/warning/error are defined as `#4ADE80`/`#FACC15`/`#F87171` for status.\n\n## Typography\n\n**Bitter** slab-serif for headings (700, with a lime glow on the hero); **Cabin** sans for body and uppercase labels.\n\n| Token          | Family | Size | Weight | Usage                          |\n| -------------- | ------ | ---- | ------ | ------------------------------ |\n| heading        | Bitter | 72px | 700    | Hero h1 (glow)                 |\n| heading-section| Bitter | 48px | 700    | Section h2                     |\n| body           | Cabin  | 16px | 400    | Body prose                     |\n| body-lg        | Cabin  | 20px | 500    | Lead/testimonial               |\n| label          | Cabin  | 12px | 700    | Uppercase tags (tracking-wide) |\n\n## Layout\n\n`--k-spacing` scale (4/8/16/24/28/32/48). A fixed 80px **icon sidebar** (with a morphing lime blob marking the active item) sits beside a main column: a hero with a **torn-paper** panel floating over scattered, rotated photo cards; a 3-up **feature card** grid (each card tilted, straightening on hover); alternating **wabi-border** testimonial bubbles; a centered CTA; and a floating rounded **footer dock**.\n\n## Elevation & Depth\n\nChunky **soft-black offset shadows** define the brutalist-but-soft depth: `{shadows.sm}` `2px2px`, `{shadows.md}` `6px6px`, `{shadows.lg}` `12px12px` on feature cards. Buttons use an inset \"neomorph cutout\" shadow. The footer dock floats with a large ambient `0 20px 50px rgba(0,0,0,0.8)`.\n\n## Shapes\n\nSmall radii — `{rounded.sm}` 2px, `{rounded.md}` 4px (default), `{rounded.lg}` 8px, `{rounded.xl}` 12px, plus `{rounded.full}` for pills/avatars/dock and an organic **wabi** radius (`40px 10px 45px 12px / …`) for testimonial bubbles. The morph-blob animates its border-radius continuously.\n\n## Components\n\n- **card-feature** — `#383838` surface, white/10 hairline, `12px` offset shadow, tilted ±1–1.5° (hover → straight + scale 1.02).\n- **button-primary** — neomorph inset cutout on card surface, lime text, lifts on hover.\n- **button-marching** — animated dashed white border; lime fills upward on hover, text turns black.\n- **highlight-mark** — lime block behind black words, slightly rotated.\n- **morph-blob** — lime organic shape marking the active nav icon.\n- **footer-dock** — rounded-full `#111` pill with brand + nav + version.\n\n## Motion\n\nSignatures: the **morph** blob (`6s ease-in-out alternate`), **marching ants** (`ants 10s linear`), `animate-bounce`/`pulse` accents, and hover tilt-straightening on cards. (Transitions are globally disabled in the capture source, so durations are the authored intent.)\n\n## Iconography\n\n**Tabler** line icons (`ti-pencil-code`, `ti-moon-stars`, `ti-home-2`) — lime for brand/active, on-surface otherwise — plus grayscaled **OpenMoji** color emoji (artist, moon, star) as illustrative accents.\n\n## Do's and Don'ts\n\n- **Do** keep the layered charcoal greys with soft off-white ink.\n- **Do** reserve glowing lime for CTAs, highlights and the active nav blob.\n- **Do** embrace wabi-sabi: slight card rotations, scribble underlines, torn/crosshatch textures.\n- **Do** use the `--k-*` tokens and chunky soft-black offset shadows.\n- **Don't** brighten the canvas — this is a dark, nocturnal theme.\n- **Don't** overuse lime; its scarcity against grey is the point.\n- **Don't** use large/perfect radii on cards; keep small radii + organic wabi shapes for bubbles.\n\n## Known Gaps\n\n- Values read from the implementation's `--k-*` design tokens. Some photo sources are local (`/api/local/images/...`). Copy/imagery are sample content; the source disables transitions globally.\n",
+      "id": "style_44ce05c56c58",
+      "created": "2026-06-23T10:50:48.947Z",
+      "modified": "2026-06-23T10:50:48.947Z"
+    }
+  ]
+}

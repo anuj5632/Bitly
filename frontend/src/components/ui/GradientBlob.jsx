@@ -1,19 +1,20 @@
 const GradientBlob = ({ className = '', color = 'primary' }) => {
   const colors = {
-    primary: 'from-primary-600/30 to-indigo-600/30',
-    purple: 'from-purple-600/30 to-pink-600/30',
-    blue: 'from-blue-600/30 to-cyan-600/30',
+    primary: 'bg-primary/10',
+    purple: 'bg-primary/5',
+    blue: 'bg-primary/5',
   };
 
   return (
     <div
       className={`
         absolute rounded-full
-        bg-gradient-to-br ${colors[color]}
+        ${colors[color]}
         blur-3xl
-        animate-blob
+        animate-morph
         ${className}
       `}
+      style={{ borderRadius: '40% 60% 60% 40% / 40% 40% 60% 60%' }}
     />
   );
 };

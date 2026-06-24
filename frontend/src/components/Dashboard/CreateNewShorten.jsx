@@ -40,30 +40,17 @@ const CreateNewShorten = ({ setOpen, refetch }) => {
       const shortenUrl = `${import.meta.env.VITE_REACT_FRONT_END_URL}/s/${res.shortUrl}`;
       setCreatedUrl(shortenUrl);
       
-      // Copy to clipboard
       await navigator.clipboard.writeText(shortenUrl);
       setCopied(true);
       
-      toast.success("Short URL created and copied!", {
-        style: {
-          background: '#0f172a',
-          color: '#e2e8f0',
-          border: '1px solid rgba(124, 58, 237, 0.3)',
-        },
-      });
+      toast.success("Registry updated!");
 
       if (refetch) {
         refetch();
       }
     } catch (error) {
       console.log(error);
-      toast.error("Failed to create short URL", {
-        style: {
-          background: '#0f172a',
-          color: '#e2e8f0',
-          border: '1px solid rgba(239, 68, 68, 0.3)',
-        },
-      });
+      toast.error("Registry error");
     } finally {
       setLoading(false);
     }
@@ -84,10 +71,9 @@ const CreateNewShorten = ({ setOpen, refetch }) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <AnimatePresence mode="wait">
         {createdUrl ? (
-          // Success State
           <motion.div
             key="success"
             initial={{ opacity: 0, scale: 0.95 }}
@@ -99,129 +85,123 @@ const CreateNewShorten = ({ setOpen, refetch }) => {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", delay: 0.1 }}
-              className="inline-flex items-center justify-center p-4 bg-emerald-500/10 rounded-2xl mb-4"
+              className="inline-flex items-center justify-center p-5 bg-primary/10 border border-primary/20 rounded-md mb-6"
             >
-              <Check className="w-10 h-10 text-emerald-400" />
+              <Check className="w-10 h-10 text-primary" />
             </motion.div>
             
-            <h3 className="text-xl font-semibold text-white mb-2">
-              Short URL Created!
+            <h3 className="font-heading text-2xl font-bold text-white mb-2 uppercase tracking-widest">
+              Success
             </h3>
-            <p className="text-dark-400 text-sm mb-6">
-              Your link is ready to share
+            <p className="font-body text-on-surface-secondary text-sm mb-8">
+              The link has been inscribed into the registry
             </p>
 
-            {/* Created URL Display */}
-            <div className="bg-dark-800/50 border border-dark-600 rounded-xl p-4 mb-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary-600/10 rounded-lg">
-                  <Link2 className="w-5 h-5 text-primary-400" />
+            <div className="bg-surface-secondary border-2 border-border-base rounded-md p-5 mb-8 neomorph-inset">
+              <div className="flex items-center gap-4">
+                <div className="p-2 bg-surface border border-border-base rounded-sm text-primary">
+                  <Link2 className="w-5 h-5" />
                 </div>
-                <span className="text-primary-300 font-medium flex-1 truncate text-left">
+                <span className="font-heading font-bold text-primary lime-glow flex-1 truncate text-left">
                   {createdUrl?.replace(/^https?:\/\//, '')}
                 </span>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                <button
                   onClick={handleCopyAgain}
                   className={`
-                    p-2 rounded-lg transition-colors
+                    p-2 rounded-sm transition-all duration-300
                     ${copied 
-                      ? 'bg-emerald-500/10 text-emerald-400' 
-                      : 'bg-dark-700 text-dark-300 hover:text-white'
+                      ? 'bg-primary text-black' 
+                      : 'bg-surface border border-border-base text-on-surface-muted hover:text-white'
                     }
                   `}
                 >
                   {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
-                </motion.button>
+                </button>
               </div>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-4">
               <Button
                 variant="secondary"
                 className="flex-1"
                 onClick={handleCreateAnother}
               >
-                Create Another
+                New Sketch
               </Button>
               <Button
                 className="flex-1"
                 onClick={() => setOpen(false)}
               >
-                Done
+                Exit
               </Button>
             </div>
           </motion.div>
         ) : (
-          // Form State
           <motion.form
             key="form"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onSubmit={handleSubmit(createShortUrlHandler)}
-            className="space-y-6"
+            className="space-y-8"
           >
-            <div className="text-center mb-4">
-              <div className="inline-flex items-center justify-center p-3 bg-primary-600/10 rounded-xl mb-3">
-                <Sparkles className="w-6 h-6 text-primary-400" />
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center p-4 bg-surface-secondary border border-border-base rounded-md mb-6 text-primary shadow-sm">
+                <Sparkles className="w-8 h-8" />
               </div>
-              <p className="text-dark-400 text-sm">
-                Paste your long URL below to create a shortened link
+              <p className="font-body text-on-surface-secondary text-sm">
+                Inscribe your long path into the nocturnal registry
               </p>
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="originalUrl" className="block text-sm font-medium text-dark-300">
-                Original URL
+            <div className="space-y-3">
+              <label htmlFor="originalUrl" className="block text-[10px] font-bold uppercase tracking-widest text-on-surface-muted">
+                Original Path
               </label>
               <div className="relative">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-400">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-muted">
                   <Link2 className="w-5 h-5" />
                 </div>
                 <input
                   type="url"
                   id="originalUrl"
-                  placeholder="https://example.com/your-long-url"
+                  placeholder="HTTPS://EXAMPLE.COM/PATH"
                   className={`
-                    w-full pl-11 pr-4 py-3
-                    bg-dark-800/50 backdrop-blur-sm
-                    border rounded-xl
-                    text-white placeholder-dark-400
+                    w-full pl-12 pr-4 py-4
+                    bg-surface-secondary
+                    border rounded-md
+                    text-white placeholder-on-surface-muted/50
                     transition-all duration-300
-                    input-glow
-                    ${errors.originalUrl ? 'border-red-500' : 'border-dark-600 focus:border-primary-500 hover:border-dark-500'}
+                    neomorph-inset
+                    focus:outline-none focus:border-primary
+                    hover:border-border-hover
+                    ${errors.originalUrl ? 'border-error' : 'border-border-base'}
                   `}
                   {...register("originalUrl", {
-                    required: "URL is required",
+                    required: "Required",
                     pattern: {
                       value: /^(https?:\/\/)?(([a-zA-Z0-9\u00a1-\uffff-]+\.)+[a-zA-Z\u00a1-\uffff]{2,})(:\d{2,5})?(\/[^\s]*)?$/,
-                      message: "Please enter a valid URL"
+                      message: "Invalid URL"
                     }
                   })}
                 />
               </div>
               {errors.originalUrl && (
-                <motion.p
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-sm text-red-400"
-                >
+                <p className="text-[10px] text-error font-bold uppercase tracking-widest">
                   {errors.originalUrl.message}
-                </motion.p>
+                </p>
               )}
             </div>
 
             <Button
               type="submit"
-              className="w-full"
+              className="w-full py-4"
               size="lg"
               loading={loading}
               icon={ArrowRight}
               iconPosition="right"
             >
-              Create Short URL
+              Shorten Path
             </Button>
           </motion.form>
         )}

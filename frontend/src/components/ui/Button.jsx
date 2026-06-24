@@ -1,18 +1,18 @@
 import { motion } from 'framer-motion';
 
 const variants = {
-  primary: 'btn-glow bg-gradient-to-r from-primary-600 to-indigo-600 text-white font-semibold',
-  secondary: 'bg-dark-800 border border-dark-600 text-dark-200 hover:bg-dark-700 hover:border-dark-500',
-  outline: 'border-2 border-primary-500 text-primary-400 hover:bg-primary-500/10',
-  ghost: 'text-dark-300 hover:text-white hover:bg-dark-800',
-  danger: 'bg-red-600 hover:bg-red-700 text-white',
+  primary: 'marching-ants bg-transparent text-primary hover:bg-primary hover:text-black transition-colors',
+  secondary: 'bg-surface-card border border-border-base text-on-surface hover:bg-surface-card-hover hover:border-border-hover shadow-md',
+  outline: 'border-2 border-primary text-primary hover:bg-primary/10',
+  ghost: 'text-on-surface-secondary hover:text-on-surface hover:bg-surface-card',
+  danger: 'bg-error hover:bg-red-500 text-black',
 };
 
 const sizes = {
-  sm: 'px-3 py-1.5 text-sm',
-  md: 'px-5 py-2.5 text-sm',
-  lg: 'px-6 py-3 text-base',
-  xl: 'px-8 py-4 text-lg',
+  sm: 'px-3 py-1.5 text-xs tracking-wider uppercase font-bold',
+  md: 'px-5 py-2.5 text-sm tracking-wider uppercase font-bold',
+  lg: 'px-6 py-3 text-base tracking-wider uppercase font-bold',
+  xl: 'px-8 py-4 text-lg tracking-wider uppercase font-bold',
 };
 
 const Button = ({
@@ -32,7 +32,7 @@ const Button = ({
       whileTap={{ scale: disabled ? 1 : 0.98 }}
       className={`
         relative inline-flex items-center justify-center gap-2
-        rounded-xl font-medium
+        rounded-md font-body
         transition-all duration-300 ease-out
         disabled:opacity-50 disabled:cursor-not-allowed
         ${variants[variant]}
@@ -60,12 +60,12 @@ const Button = ({
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             />
           </svg>
-          <span>Loading...</span>
+          <span className="font-bold">Loading...</span>
         </>
       ) : (
         <>
           {Icon && iconPosition === 'left' && <Icon className="w-4 h-4" />}
-          {children}
+          <span className="relative z-10">{children}</span>
           {Icon && iconPosition === 'right' && <Icon className="w-4 h-4" />}
         </>
       )}

@@ -17,48 +17,59 @@ const AppRouter = () => {
   const hideHeaderFooter = location.pathname.startsWith("/s");
 
     return (
-        <>
-        {!hideHeaderFooter && <Navbar /> }
-        <Toaster 
-          position='bottom-center'
-          toastOptions={{
-            duration: 3000,
-            style: {
-              background: 'rgba(30, 41, 59, 0.95)',
-              color: '#f8fafc',
-              border: '1px solid rgba(139, 92, 246, 0.3)',
-              backdropFilter: 'blur(10px)',
-              borderRadius: '12px',
-              padding: '12px 16px',
-            },
-            success: {
-              iconTheme: {
-                primary: '#22c55e',
-                secondary: '#f8fafc',
-              },
-            },
-            error: {
-              iconTheme: {
-                primary: '#ef4444',
-                secondary: '#f8fafc',
-              },
-            },
-          }}
-        />
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/s/:url" element={<ShortenUrlPage />} />
-
-          <Route path="/register" element={<PrivateRoute publicPage={true}><RegisterPage /></PrivateRoute>} />
-          <Route path="/login" element={<PrivateRoute publicPage={true}><LoginPage /></PrivateRoute>} />
+        <div className="flex min-h-screen bg-surface">
+          {!hideHeaderFooter && <Navbar /> }
           
-          <Route path="/dashboard" element={ <PrivateRoute publicPage={false}><DashboardLayout /></PrivateRoute>} />
-          <Route path="/error" element={ <ErrorPage />} />
-          <Route path="*" element={ <ErrorPage message="We can't seem to find the page you're looking for"/>} />
-        </Routes>
-        {!hideHeaderFooter && <Footer />}
-      </>
+          <main className={`flex-1 flex flex-col ${!hideHeaderFooter ? 'pl-20' : ''}`}>
+            <Toaster 
+              position='bottom-center'
+              toastOptions={{
+                duration: 3000,
+                style: {
+                  background: '#1A1A1A',
+                  color: '#E0E0E0',
+                  border: '1px solid #444',
+                  borderRadius: '4px',
+                  padding: '12px 16px',
+                  fontFamily: 'Cabin, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px',
+                },
+                success: {
+                  iconTheme: {
+                    primary: '#DFFF00',
+                    secondary: '#000000',
+                  },
+                },
+                error: {
+                  iconTheme: {
+                    primary: '#F87171',
+                    secondary: '#000000',
+                  },
+                },
+              }}
+            />
+            
+            <div className="flex-1">
+              <Routes>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/s/:url" element={<ShortenUrlPage />} />
+
+                <Route path="/register" element={<PrivateRoute publicPage={true}><RegisterPage /></PrivateRoute>} />
+                <Route path="/login" element={<PrivateRoute publicPage={true}><LoginPage /></PrivateRoute>} />
+                
+                <Route path="/dashboard" element={ <PrivateRoute publicPage={false}><DashboardLayout /></PrivateRoute>} />
+                <Route path="/error" element={ <ErrorPage />} />
+                <Route path="*" element={ <ErrorPage message="We can't seem to find the page you're looking for"/>} />
+              </Routes>
+            </div>
+
+            {!hideHeaderFooter && <Footer />}
+          </main>
+        </div>
     );
 }
 

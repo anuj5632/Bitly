@@ -4,8 +4,8 @@ const GlassCard = ({
   children,
   className = '',
   hover = true,
-  glow = false,
   padding = 'p-6',
+  tilt = '1deg',
   ...props
 }) => {
   return (
@@ -14,23 +14,19 @@ const GlassCard = ({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
-      whileHover={hover ? { y: -4, transition: { duration: 0.2 } } : {}}
+      style={{ '--tilt': tilt }}
       className={`
         relative overflow-hidden
-        bg-dark-900/50 backdrop-blur-xl
-        border border-dark-700/50
-        rounded-2xl
-        shadow-glass
-        ${glow ? 'shadow-glow' : ''}
-        ${hover ? 'card-hover' : ''}
+        bg-surface-card
+        border border-border-base/50
+        rounded-md
+        shadow-md
+        ${hover ? 'tilted-card' : ''}
         ${padding}
         ${className}
       `}
       {...props}
     >
-      {/* Subtle gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
-      
       {/* Content */}
       <div className="relative z-10">
         {children}

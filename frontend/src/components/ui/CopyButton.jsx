@@ -22,11 +22,12 @@ const CopyButton = ({ text, className = '' }) => {
       onClick={handleCopy}
       className={`
         relative flex items-center justify-center gap-2
-        px-4 py-2 rounded-xl
-        bg-dark-800 border border-dark-600
-        text-dark-200 hover:text-white
-        hover:border-primary-500/50
+        px-4 py-2 rounded-md
+        bg-surface-secondary border border-border-base
+        text-on-surface-secondary hover:text-primary
+        hover:border-primary/50
         transition-all duration-300
+        text-[10px] font-bold uppercase tracking-widest
         ${className}
       `}
     >
@@ -37,10 +38,10 @@ const CopyButton = ({ text, className = '' }) => {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             exit={{ scale: 0 }}
-            className="flex items-center gap-2 text-green-400"
+            className="flex items-center gap-2 text-primary"
           >
-            <Check className="w-4 h-4" />
-            <span>Copied!</span>
+            <Check className="w-3.5 h-3.5" />
+            <span>Recorded</span>
           </motion.div>
         ) : (
           <motion.div
@@ -50,8 +51,8 @@ const CopyButton = ({ text, className = '' }) => {
             exit={{ scale: 0 }}
             className="flex items-center gap-2"
           >
-            <Copy className="w-4 h-4" />
-            <span>Copy</span>
+            <Copy className="w-3.5 h-3.5" />
+            <span>Copy Path</span>
           </motion.div>
         )}
       </AnimatePresence>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import dayjs from 'dayjs';
 import { 
@@ -9,19 +9,15 @@ import {
   MousePointerClick,
   ChevronDown,
   BarChart3,
-  QrCode,
-  Trash2
 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import api from '../../api/api';
 import { useStoreContext } from '../../contextApi/ContextApi';
-import { Button } from '../ui';
 import Graph from './Graph';
 
 const ShortenItem = ({ originalUrl, shortUrl, clickCount, createdDate }) => {
   const { token } = useStoreContext();
-  const navigate = useNavigate();
   const [isCopied, setIsCopied] = useState(false);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -41,16 +37,15 @@ const ShortenItem = ({ originalUrl, shortUrl, clickCount, createdDate }) => {
   };
 
   const fetchAnalytics = async () => {
-    if (analyticsData.length > 0) return; // Already fetched
+    if (analyticsData.length > 0) return;
     
     setLoading(true);
     try {
-      // Use dynamic date range: last 30 days to today
       const endDate = new Date();
-      endDate.setHours(23, 59, 59, 0); // End of today
+      endDate.setHours(23, 59, 59, 0);
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - 30);
-      startDate.setHours(0, 0, 0, 0); // Start of day 30 days ago
+      startDate.setHours(0, 0, 0, 0);
       
       const formatDate = (date) => {
         const pad = (n) => n.toString().padStart(2, '0');
@@ -67,8 +62,7 @@ const ShortenItem = ({ originalUrl, shortUrl, clickCount, createdDate }) => {
           },
         }
       );
-      console.log("Analytics response:", data);
-      // Transform object to array format for Graph component
+      
       let transformedData = [];
       if (data && typeof data === 'object' && !Array.isArray(data)) {
         transformedData = Object.keys(data).map((key) => ({
@@ -78,7 +72,6 @@ const ShortenItem = ({ originalUrl, shortUrl, clickCount, createdDate }) => {
       } else if (Array.isArray(data)) {
         transformedData = data;
       }
-      console.log("Transformed data:", transformedData);
       setAnalyticsData(transformedData);
     } catch (error) {
       console.error(error);
@@ -98,138 +91,92 @@ const ShortenItem = ({ originalUrl, shortUrl, clickCount, createdDate }) => {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-dark-800/30 backdrop-blur-sm border border-dark-700/50 rounded-2xl overflow-hidden hover:border-dark-600/50 transition-all duration-300"
+      className="bg-surface-secondary/50 border border-border-base rounded-md overflow-hidden hover:border-primary/30 transition-all duration-300 tilted-card"
+      style={{ '--tilt': '-0.5deg' }}
     >
-      {/* Main Content */}
       <div className="p-5">
-        <div className="flex flex-col lg:flex-row lg:items-center gap-4">
-          {/* URL Info */}
+        <div className="flex flex-col gap-4">
           <div className="flex-1 min-w-0">
-            {/* Short URL */}
             <div className="flex items-center gap-2 mb-2">
               <Link
                 to={`/s/${shortUrl}`}
                 target="_blank"
-                className="text-primary-400 hover:text-primary-300 font-medium flex items-center gap-2 transition-colors"
+                className="text-primary hover:text-primary-hover font-heading font-bold flex items-center gap-2 transition-colors lime-glow"
               >
                 <span className="truncate">{subDomain}/s/{shortUrl}</span>
-                <ExternalLink className="w-4 h-4 shrink-0" />
+                <ExternalLink className="w-3 h-3 shrink-0" />
               </Link>
             </div>
             
-            {/* Original URL */}
-            <p className="text-dark-400 text-sm truncate mb-3">
+            <p className="text-on-surface-muted text-xs truncate mb-4 font-body opacity-80">
               {originalUrl}
             </p>
             
-            {/* Meta Info */}
-            <div className="flex flex-wrap items-center gap-4 text-sm">
-              <div className="flex items-center gap-1.5 text-emerald-400">
-                <MousePointerClick className="w-4 h-4" />
-                <span className="font-medium">{clickCount}</span>
-                <span className="text-dark-400">
-                  {clickCount === 1 ? 'click' : 'clicks'}
-                </span>
+            <div className="flex flex-wrap items-center gap-6 text-[10px] font-bold uppercase tracking-widest">
+              <div className="flex items-center gap-2 text-primary">
+                <MousePointerClick className="w-3.5 h-3.5" />
+                <span>{clickCount} IMPS</span>
               </div>
               
-              <div className="flex items-center gap-1.5 text-dark-400">
-                <Calendar className="w-4 h-4" />
+              <div className="flex items-center gap-2 text-on-surface-muted">
+                <Calendar className="w-3.5 h-3.5" />
                 <span>{dayjs(createdDate).format("MMM DD, YYYY")}</span>
               </div>
             </div>
           </div>
           
-          {/* Actions */}
-          <div className="flex items-center gap-2 shrink-0">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+          <div className="flex items-center gap-3 pt-4 border-t border-border-base/50 mt-2">
+            <button
               onClick={handleCopy}
               className={`
-                flex items-center gap-2 px-4 py-2 rounded-xl
-                transition-all duration-300
+                flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-[10px] font-bold uppercase tracking-widest
+                transition-all duration-300 border
                 ${isCopied 
-                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' 
-                  : 'bg-dark-700/50 text-dark-200 hover:text-white border border-dark-600 hover:border-primary-500/50'
+                  ? 'bg-primary text-black border-primary' 
+                  : 'bg-surface border-border-base text-on-surface-secondary hover:text-primary hover:border-primary'
                 }
               `}
             >
-              <AnimatePresence mode="wait">
-                {isCopied ? (
-                  <motion.div
-                    key="check"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    exit={{ scale: 0 }}
-                    className="flex items-center gap-2"
-                  >
-                    <Check className="w-4 h-4" />
-                    <span>Copied!</span>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="copy"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    exit={{ scale: 0 }}
-                    className="flex items-center gap-2"
-                  >
-                    <Copy className="w-4 h-4" />
-                    <span>Copy</span>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.button>
+              {isCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+              <span>{isCopied ? 'Recorded' : 'Copy Path'}</span>
+            </button>
             
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            <button
               onClick={handleToggleAnalytics}
               className={`
-                flex items-center gap-2 px-4 py-2 rounded-xl
-                transition-all duration-300
+                flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-[10px] font-bold uppercase tracking-widest
+                transition-all duration-300 border
                 ${showAnalytics 
-                  ? 'bg-primary-500/10 text-primary-400 border border-primary-500/30' 
-                  : 'bg-dark-700/50 text-dark-200 hover:text-white border border-dark-600 hover:border-primary-500/50'
+                  ? 'bg-surface-card border-primary text-primary' 
+                  : 'bg-surface border-border-base text-on-surface-secondary hover:text-on-surface'
                 }
               `}
             >
-              <BarChart3 className="w-4 h-4" />
+              <BarChart3 className="w-3.5 h-3.5" />
               <span>Analytics</span>
-              <ChevronDown className={`w-4 h-4 transition-transform ${showAnalytics ? 'rotate-180' : ''}`} />
-            </motion.button>
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showAnalytics ? 'rotate-180' : ''}`} />
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Analytics Panel */}
       <AnimatePresence>
         {showAnalytics && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="overflow-hidden"
+            className="overflow-hidden bg-surface-secondary"
           >
-            <div className="border-t border-dark-700/50 p-5 bg-dark-900/30">
-              <div className="h-64 relative">
+            <div className="border-t border-border-base p-6">
+              <div className="h-48 relative">
                 {loading ? (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
-                      <p className="text-dark-400 text-sm">Loading analytics...</p>
-                    </div>
+                    <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                   </div>
                 ) : analyticsData.length === 0 ? (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <div className="p-3 bg-dark-800/50 rounded-xl mb-3">
-                      <BarChart3 className="w-8 h-8 text-dark-500" />
-                    </div>
-                    <h4 className="text-white font-medium mb-1">No analytics yet</h4>
-                    <p className="text-dark-400 text-sm text-center max-w-xs">
-                      Share this link to start seeing engagement data
-                    </p>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center opacity-40">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-muted">No analytics data recorded</p>
                   </div>
                 ) : (
                   <Graph graphData={analyticsData} type="bar" />
